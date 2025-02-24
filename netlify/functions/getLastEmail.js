@@ -46,6 +46,7 @@ exports.handler = async (event) => {
       "Important: How to update your Home with Netflix",
       "update your Home with Netflix",
       "Your Netflix temporary access code",
+      "temporary access code",
       "Completa tu solicitud de restablecimiento de contraseña"
     ];
 

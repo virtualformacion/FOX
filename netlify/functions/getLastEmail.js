@@ -1,4 +1,4 @@
-﻿require("dotenv").config();
+require("dotenv").config();
 const { google } = require("googleapis");
 
 exports.handler = async (event) => {
@@ -32,21 +32,10 @@ exports.handler = async (event) => {
       return { statusCode: 404, body: JSON.stringify({ message: "No hay mensajes recientes" }) };
     }
 
-    
     // 🔹 Filtrar correos por asunto
     const validSubjects = [
       "Importante: Cómo actualizar tu Hogar con Netflix",
-      "Importante: Como actualizar tu Hogar con Netflix",
       "Tu código de acceso temporal de Netflix",
-      "Tu codigo de acceso temporal de Netflix",
-      "Completa tu solicitud de restablecimiento de contraseña",
-      "actualizar tu Hogar con Netflix",
-      "acceso temporal de Netflix",
-      "solicitud de restablecimiento de contraseña",
-      "Important: How to update your Home with Netflix",
-      "update your Home with Netflix",
-      "Your Netflix temporary access code",
-      "temporary access code",
       "Completa tu solicitud de restablecimiento de contraseña"
     ];
 
@@ -67,8 +56,6 @@ exports.handler = async (event) => {
       const randomWaitTime = Math.floor(Math.random() * (8000 - 1000 + 1)) + 1000;
       await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
 
-    
-    for (let msg of response.data.messages) {
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
       const toHeader = headers.find(h => h.name === "To");
@@ -83,6 +70,7 @@ exports.handler = async (event) => {
       console.log("⏳ Diferencia de tiempo (ms):", now - timestamp);
       console.log("📝 Cuerpo del correo:", getMessageBody(message.data));
 
+      // Condición para verificar si el correo es relevante según el tiempo
       if (
         toHeader &&
         toHeader.value.toLowerCase().includes(email.toLowerCase()) &&
@@ -97,7 +85,7 @@ exports.handler = async (event) => {
       }
     }
 
-    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encontra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
+    return { statusCode: 404, body: JSON.stringify({ message: "No se ha encuentra un resultado para tu cuenta, vuelve a intentar nuevamente" }) };
   } catch (error) {
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }

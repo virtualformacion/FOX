@@ -1,6 +1,12 @@
 require("dotenv").config();
 const { google } = require("googleapis");
 
+// Función para generar un retraso aleatorio sin necesidad de `sleep()`
+function delay() {
+  const delayTime = Math.floor(Math.random() * (3000 - 1000 + 1)) + 1000; // Aleatorio entre 1000ms (1s) y 10000ms (10s)
+  return new Promise(resolve => setTimeout(resolve, delayTime)); // Devuelve una promesa que se resuelve después del delay
+}
+
 exports.handler = async (event) => {
   try {
     const { email } = JSON.parse(event.body);
@@ -20,6 +26,9 @@ exports.handler = async (event) => {
     // 🔹 Verificar en qué cuenta está buscando correos
     const gmailProfile = await gmail.users.getProfile({ userId: "me" });
     console.log("🔍 Buscando correos en la cuenta:", gmailProfile.data.emailAddress);
+
+    // Retraso aleatorio antes de obtener los mensajes
+    await delay();  // Pausa de entre 1 y 10 segundos
 
     const response = await gmail.users.messages.list({
       userId: "me",
@@ -45,16 +54,10 @@ exports.handler = async (event) => {
       "https://www.netflix.com/account/update-primary-location?nftoken="
     ];
 
-    // Función para la espera aleatoria
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    // Iterar sobre los mensajes y aplicar un tiempo de espera aleatorio entre solicitudes
+    // Procesar cada mensaje encontrado
     for (let msg of response.data.messages) {
-      // Pausa aleatoria entre 1 y 3 segundos (1000-3000 ms)
-      const randomWaitTime = Math.floor(Math.random() * (6000 - 1000 + 1)) + 1000;
-      await sleep(randomWaitTime); // Espera aleatoria entre solicitudes
+      // Retraso aleatorio antes de procesar cada mensaje
+      await delay();  // Pausa de entre 1 y 10 segundos
 
       const message = await gmail.users.messages.get({ userId: "me", id: msg.id });
       const headers = message.data.payload.headers;
@@ -70,12 +73,11 @@ exports.handler = async (event) => {
       console.log("⏳ Diferencia de tiempo (ms):", now - timestamp);
       console.log("📝 Cuerpo del correo:", getMessageBody(message.data));
 
-      // Condición para verificar si el correo es relevante según el tiempo
       if (
         toHeader &&
         toHeader.value.toLowerCase().includes(email.toLowerCase()) &&
         validSubjects.some(subject => subjectHeader.value.includes(subject)) &&
-        (now - timestamp) <= 13 * 60 * 1000 // Aumentar a 10 minutos para pruebas
+        (now - timestamp) <= 10 * 60 * 1000 // Aumentar a 10 minutos para pruebas
       ) {
         const body = getMessageBody(message.data);
         const link = extractLink(body, validLinks);

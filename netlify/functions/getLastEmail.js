@@ -45,6 +45,7 @@ exports.handler = async (event) => {
     const disneySubjects = [
       "amazon.com: Sign-in attempt",
       "amazon.com: Intento de inicio de sesión",
+      "Netflix: Tu código de inicio de sesión",
       "Este código vence en 15 minutos",
       "Tu código de acceso único para Disney+" // Asunto específico de Disney+
     ];
